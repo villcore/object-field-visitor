@@ -19,5 +19,5 @@ package com.villcore;
 import com.villcore.reflect.TypeToken;
 
 public interface TypeAdapterFactory {
-  <T> TypeAdapter<T> create(ObjectFieldHelper objectFieldHelper, TypeToken<T> type);
+    <T> TypeAdapter<T> create(ObjectFieldHelper objectFieldHelper, TypeToken<T> type);
 }

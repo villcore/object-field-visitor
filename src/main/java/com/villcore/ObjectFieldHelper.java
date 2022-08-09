@@ -113,7 +113,7 @@ public final class ObjectFieldHelper {
 
         // type adapters for composite and user-defined types
         factories.add(new CollectionTypeAdapterFactory(constructorConstructor));
-        factories.add(new MapTypeAdapterFactory(constructorConstructor, complexMapKeySerialization));
+        factories.add(new MapTypeAdapterFactory(constructorConstructor));
         this.jsonAdapterFactory = new JsonAdapterAnnotationTypeAdapterFactory(constructorConstructor);
         factories.add(jsonAdapterFactory);
         // factories.add(TypeAdapters.ENUM_FACTORY);

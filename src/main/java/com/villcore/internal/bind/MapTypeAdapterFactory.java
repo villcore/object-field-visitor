@@ -16,7 +16,6 @@
 
 package com.villcore.internal.bind;
 
-import com.villcore.JsonElement;
 import com.villcore.ObjectFieldHelper;
 import com.villcore.TypeAdapter;
 import com.villcore.TypeAdapterFactory;
@@ -28,18 +27,14 @@ import com.villcore.visitor.Visitor;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public final class MapTypeAdapterFactory implements TypeAdapterFactory {
 
     private final ConstructorConstructor constructorConstructor;
-    final boolean complexMapKeySerialization;
 
-    public MapTypeAdapterFactory(ConstructorConstructor constructorConstructor, boolean complexMapKeySerialization) {
+    public MapTypeAdapterFactory(ConstructorConstructor constructorConstructor) {
         this.constructorConstructor = constructorConstructor;
-        this.complexMapKeySerialization = complexMapKeySerialization;
     }
 
     @Override
@@ -78,13 +73,12 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
         private final TypeAdapter<V> valueTypeAdapter;
         private final ObjectConstructor<? extends Map<K, V>> constructor;
 
-        public Adapter(ObjectFieldHelper context, Type keyType, TypeAdapter<K> keyTypeAdapter,
+        public Adapter(ObjectFieldHelper context,
+                       Type keyType, TypeAdapter<K> keyTypeAdapter,
                        Type valueType, TypeAdapter<V> valueTypeAdapter,
                        ObjectConstructor<? extends Map<K, V>> constructor) {
-            this.keyTypeAdapter =
-                    new TypeAdapterRuntimeTypeWrapper<K>(context, keyTypeAdapter, keyType);
-            this.valueTypeAdapter =
-                    new TypeAdapterRuntimeTypeWrapper<V>(context, valueTypeAdapter, valueType);
+            this.keyTypeAdapter = new TypeAdapterRuntimeTypeWrapper<K>(context, keyTypeAdapter, keyType);
+            this.valueTypeAdapter = new TypeAdapterRuntimeTypeWrapper<V>(context, valueTypeAdapter, valueType);
             this.constructor = constructor;
         }
 
@@ -94,32 +88,8 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
                 return;
             }
 
-            if (!complexMapKeySerialization) {
-                for (Map.Entry<K, V> entry : map.entrySet()) {
-                    valueTypeAdapter.visit(entry.getValue(), visitor);
-                }
-                return;
-            }
-
-            boolean hasComplexKeys = false;
-            List<JsonElement> keys = new ArrayList<JsonElement>(map.size());
-
-            List<V> values = new ArrayList<V>(map.size());
             for (Map.Entry<K, V> entry : map.entrySet()) {
-                JsonElement keyElement = keyTypeAdapter.toJsonTree(entry.getKey(), visitor);
-                keys.add(keyElement);
-                values.add(entry.getValue());
-                hasComplexKeys |= keyElement.isJsonArray() || keyElement.isJsonObject();
-            }
-
-            if (hasComplexKeys) {
-                for (int i = 0, size = keys.size(); i < size; i++) {
-                    valueTypeAdapter.visit(values.get(i), visitor);
-                }
-            } else {
-                for (int i = 0, size = keys.size(); i < size; i++) {
-                    valueTypeAdapter.visit(values.get(i), visitor);
-                }
+                valueTypeAdapter.visit(entry.getValue(), visitor);
             }
         }
     }

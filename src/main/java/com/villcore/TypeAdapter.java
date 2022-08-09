@@ -16,7 +16,6 @@
 
 package com.villcore;
 
-import com.villcore.internal.bind.JsonTreeWriter;
 import com.villcore.visitor.Visitor;
 
 import java.io.IOException;
@@ -34,15 +33,5 @@ public abstract class TypeAdapter<T> {
                 }
             }
         };
-    }
-
-    public final JsonElement toJsonTree(T value, Visitor visitor) {
-        try {
-            JsonTreeWriter jsonWriter = new JsonTreeWriter();
-            visit(value, visitor);
-            return jsonWriter.get();
-        } catch (IOException e) {
-            throw new JsonIOException(e);
-        }
     }
 }
