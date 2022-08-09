@@ -18,16 +18,14 @@ package com.villcore;
 
 import com.villcore.visitor.Visitor;
 
-import java.io.IOException;
-
 public abstract class TypeAdapter<T> {
 
-    public abstract void visit(T value, Visitor visitor) throws IOException;
+    public abstract void visit(T value, Visitor visitor) throws Exception;
 
     public final TypeAdapter<T> nullSafe() {
         return new TypeAdapter<T>() {
             @Override
-            public void visit(T value, Visitor visitor) throws IOException {
+            public void visit(T value, Visitor visitor) throws Exception {
                 if (value != null) {
                     TypeAdapter.this.visit(value, visitor);
                 }

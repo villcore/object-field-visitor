@@ -20,21 +20,15 @@ import com.villcore.ObjectFieldHelper;
 import com.villcore.TypeAdapter;
 import com.villcore.TypeAdapterFactory;
 import com.villcore.internal.$Gson$Types;
-import com.villcore.internal.ConstructorConstructor;
-import com.villcore.internal.ObjectConstructor;
 import com.villcore.reflect.TypeToken;
 import com.villcore.visitor.Visitor;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Map;
 
 public final class MapTypeAdapterFactory implements TypeAdapterFactory {
 
-    private final ConstructorConstructor constructorConstructor;
-
-    public MapTypeAdapterFactory(ConstructorConstructor constructorConstructor) {
-        this.constructorConstructor = constructorConstructor;
+    public MapTypeAdapterFactory() {
     }
 
     @Override
@@ -50,12 +44,11 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
         Type[] keyAndValueTypes = $Gson$Types.getMapKeyAndValueTypes(type, rawTypeOfSrc);
         TypeAdapter<?> keyAdapter = getKeyAdapter(objectFieldHelper, keyAndValueTypes[0]);
         TypeAdapter<?> valueAdapter = objectFieldHelper.getAdapter(TypeToken.get(keyAndValueTypes[1]));
-        ObjectConstructor<T> constructor = constructorConstructor.get(typeToken);
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         // we don't define a type parameter for the key or value types
         TypeAdapter<T> result = new Adapter(objectFieldHelper, keyAndValueTypes[0], keyAdapter,
-                keyAndValueTypes[1], valueAdapter, constructor);
+                keyAndValueTypes[1], valueAdapter);
         return result;
     }
 
@@ -71,19 +64,16 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
     private final class Adapter<K, V> extends TypeAdapter<Map<K, V>> {
         private final TypeAdapter<K> keyTypeAdapter;
         private final TypeAdapter<V> valueTypeAdapter;
-        private final ObjectConstructor<? extends Map<K, V>> constructor;
 
         public Adapter(ObjectFieldHelper context,
                        Type keyType, TypeAdapter<K> keyTypeAdapter,
-                       Type valueType, TypeAdapter<V> valueTypeAdapter,
-                       ObjectConstructor<? extends Map<K, V>> constructor) {
+                       Type valueType, TypeAdapter<V> valueTypeAdapter) {
             this.keyTypeAdapter = new TypeAdapterRuntimeTypeWrapper<K>(context, keyTypeAdapter, keyType);
             this.valueTypeAdapter = new TypeAdapterRuntimeTypeWrapper<V>(context, valueTypeAdapter, valueType);
-            this.constructor = constructor;
         }
 
         @Override
-        public void visit(Map<K, V> map, Visitor visitor) throws IOException {
+        public void visit(Map<K, V> map, Visitor visitor) throws Exception {
             if (map == null) {
                 return;
             }

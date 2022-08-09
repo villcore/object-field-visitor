@@ -59,7 +59,7 @@ public final class ArrayTypeAdapter<E> extends TypeAdapter<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void visit(Object array, Visitor visitor) throws IOException {
+    public void visit(Object array, Visitor visitor) throws Exception {
         if (array == null) {
             return;
         }

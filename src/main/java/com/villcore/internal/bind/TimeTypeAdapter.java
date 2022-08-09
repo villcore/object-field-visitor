@@ -45,7 +45,7 @@ public final class TimeTypeAdapter extends TypeAdapter<Time> {
     private final DateFormat format = new SimpleDateFormat("hh:mm:ss a");
 
     @Override
-    public synchronized void visit(Time value, Visitor visitor) throws IOException {
+    public synchronized void visit(Time value, Visitor visitor) throws Exception {
         // out.value(value == null ? null : format.format(value));
     }
 }

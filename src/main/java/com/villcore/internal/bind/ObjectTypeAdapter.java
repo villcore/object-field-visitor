@@ -48,7 +48,7 @@ public final class ObjectTypeAdapter extends TypeAdapter<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void visit(Object value, Visitor visitor) throws IOException {
+    public void visit(Object value, Visitor visitor) throws Exception {
         if (value == null) {
             return;
         }

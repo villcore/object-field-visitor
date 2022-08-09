@@ -16,14 +16,10 @@
 
 package com.villcore;
 
-import com.villcore.internal.bind.util.ISO8601Utils;
 import com.villcore.visitor.Visitor;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -81,31 +77,13 @@ final class DefaultDateTypeAdapter extends TypeAdapter<Date> {
     // These methods need to be synchronized since JDK DateFormat classes are not thread-safe
     // See issue 162
     @Override
-    public void visit(Date value, Visitor visitor) throws IOException {
+    public void visit(Date value, Visitor visitor) throws Exception {
         if (value == null) {
             return;
         }
         synchronized (localFormat) {
             String dateFormatAsString = enUsFormat.format(value);
             // out.value(dateFormatAsString);
-        }
-    }
-
-    private Date deserializeToDate(String s) {
-        synchronized (localFormat) {
-            try {
-                return localFormat.parse(s);
-            } catch (ParseException ignored) {
-            }
-            try {
-                return enUsFormat.parse(s);
-            } catch (ParseException ignored) {
-            }
-            try {
-                return ISO8601Utils.parse(s, new ParsePosition(0));
-            } catch (ParseException e) {
-                throw new JsonSyntaxException(s, e);
-            }
         }
     }
 

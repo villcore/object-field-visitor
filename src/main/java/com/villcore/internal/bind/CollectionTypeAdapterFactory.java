@@ -20,12 +20,9 @@ import com.villcore.ObjectFieldHelper;
 import com.villcore.TypeAdapter;
 import com.villcore.TypeAdapterFactory;
 import com.villcore.internal.$Gson$Types;
-import com.villcore.internal.ConstructorConstructor;
-import com.villcore.internal.ObjectConstructor;
 import com.villcore.reflect.TypeToken;
 import com.villcore.visitor.Visitor;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
@@ -33,10 +30,8 @@ import java.util.Collection;
  * Adapt a homogeneous collection of objects.
  */
 public final class CollectionTypeAdapterFactory implements TypeAdapterFactory {
-    private final ConstructorConstructor constructorConstructor;
 
-    public CollectionTypeAdapterFactory(ConstructorConstructor constructorConstructor) {
-        this.constructorConstructor = constructorConstructor;
+    public CollectionTypeAdapterFactory() {
     }
 
     @Override
@@ -50,26 +45,22 @@ public final class CollectionTypeAdapterFactory implements TypeAdapterFactory {
 
         Type elementType = $Gson$Types.getCollectionElementType(type, rawType);
         TypeAdapter<?> elementTypeAdapter = objectFieldHelper.getAdapter(TypeToken.get(elementType));
-        ObjectConstructor<T> constructor = constructorConstructor.get(typeToken);
 
         @SuppressWarnings({"unchecked", "rawtypes"}) // create() doesn't define a type parameter
-        TypeAdapter<T> result = new Adapter(objectFieldHelper, elementType, elementTypeAdapter, constructor);
+        TypeAdapter<T> result = new Adapter(objectFieldHelper, elementType, elementTypeAdapter);
         return result;
     }
 
     private static final class Adapter<E> extends TypeAdapter<Collection<E>> {
         private final TypeAdapter<E> elementTypeAdapter;
-        private final ObjectConstructor<? extends Collection<E>> constructor;
 
         public Adapter(ObjectFieldHelper context, Type elementType,
-                       TypeAdapter<E> elementTypeAdapter,
-                       ObjectConstructor<? extends Collection<E>> constructor) {
+                       TypeAdapter<E> elementTypeAdapter) {
             this.elementTypeAdapter = new TypeAdapterRuntimeTypeWrapper<E>(context, elementTypeAdapter, elementType);
-            this.constructor = constructor;
         }
 
         @Override
-        public void visit(Collection<E> collection, Visitor visitor) throws IOException {
+        public void visit(Collection<E> collection, Visitor visitor) throws Exception {
             if (collection == null) {
                 return;
             }

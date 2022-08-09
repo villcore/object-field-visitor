@@ -37,7 +37,7 @@ final class TypeAdapterRuntimeTypeWrapper<T> extends TypeAdapter<T> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void visit(T value, Visitor visitor) throws IOException {
+    public void visit(T value, Visitor visitor) throws Exception {
         // Order of preference for choosing type adapters
         // First preference: a type adapter registered for the runtime type
         // Second preference: a type adapter registered for the declared type

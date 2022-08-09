@@ -19,11 +19,9 @@ package com.villcore.internal.bind;
 import com.villcore.ObjectFieldHelper;
 import com.villcore.TypeAdapter;
 import com.villcore.TypeAdapterFactory;
-import com.villcore.annotations.SerializedName;
 import com.villcore.reflect.TypeToken;
 import com.villcore.visitor.Visitor;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -46,7 +44,7 @@ public final class TypeAdapters {
     @SuppressWarnings("rawtypes")
     public static final TypeAdapter<Class> CLASS = new TypeAdapter<Class>() {
         @Override
-        public void visit(Class value, Visitor visitor) throws IOException {
+        public void visit(Class value, Visitor visitor) throws Exception {
             throw new UnsupportedOperationException("Attempted to serialize java.lang.Class: "
                     + value.getName() + ". Forgot to register a type adapter?");
         }
@@ -56,7 +54,7 @@ public final class TypeAdapters {
 
     public static final TypeAdapter<BitSet> BIT_SET = new TypeAdapter<BitSet>() {
         @Override
-        public void visit(BitSet src, Visitor visitor) throws IOException {
+        public void visit(BitSet src, Visitor visitor) throws Exception {
             for (int i = 0, length = src.length(); i < length; i++) {
                 int value = (src.get(i)) ? 1 : 0;
                 // out.value(value);
@@ -69,7 +67,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Boolean> BOOLEAN = new TypeAdapter<Boolean>() {
 
         @Override
-        public void visit(Boolean value, Visitor visitor) throws IOException {
+        public void visit(Boolean value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -81,7 +79,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Boolean> BOOLEAN_AS_STRING = new TypeAdapter<Boolean>() {
 
         @Override
-        public void visit(Boolean value, Visitor visitor) throws IOException {
+        public void visit(Boolean value, Visitor visitor) throws Exception {
             // out.value(value == null ? "null" : value.toString());
         }
     };
@@ -91,7 +89,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Number> BYTE = new TypeAdapter<Number>() {
 
         @Override
-        public void visit(Number value, Visitor visitor) throws IOException {
+        public void visit(Number value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -100,7 +98,7 @@ public final class TypeAdapters {
 
     public static final TypeAdapter<Number> SHORT = new TypeAdapter<Number>() {
         @Override
-        public void visit(Number value, Visitor visitor) throws IOException {
+        public void visit(Number value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -110,7 +108,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Number> INTEGER = new TypeAdapter<Number>() {
 
         @Override
-        public void visit(Number value, Visitor visitor) throws IOException {
+        public void visit(Number value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -119,7 +117,7 @@ public final class TypeAdapters {
 
     public static final TypeAdapter<AtomicInteger> ATOMIC_INTEGER = new TypeAdapter<AtomicInteger>() {
         @Override
-        public void visit(AtomicInteger value, Visitor visitor) throws IOException {
+        public void visit(AtomicInteger value, Visitor visitor) throws Exception {
             // out.value(value.get());
         }
     }.nullSafe();
@@ -128,7 +126,7 @@ public final class TypeAdapters {
 
     public static final TypeAdapter<AtomicBoolean> ATOMIC_BOOLEAN = new TypeAdapter<AtomicBoolean>() {
         @Override
-        public void visit(AtomicBoolean value, Visitor visitor) throws IOException {
+        public void visit(AtomicBoolean value, Visitor visitor) throws Exception {
             // out.value(value.get());
         }
     }.nullSafe();
@@ -138,7 +136,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<AtomicIntegerArray> ATOMIC_INTEGER_ARRAY = new TypeAdapter<AtomicIntegerArray>() {
 
         @Override
-        public void visit(AtomicIntegerArray value, Visitor visitor) throws IOException {
+        public void visit(AtomicIntegerArray value, Visitor visitor) throws Exception {
             for (int i = 0, length = value.length(); i < length; i++) {
                 // out.value(value.get(i));
             }
@@ -150,7 +148,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Number> LONG = new TypeAdapter<Number>() {
 
         @Override
-        public void visit(Number value, Visitor visitor) throws IOException {
+        public void visit(Number value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -158,7 +156,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Number> FLOAT = new TypeAdapter<Number>() {
 
         @Override
-        public void visit(Number value, Visitor visitor) throws IOException {
+        public void visit(Number value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -166,7 +164,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Number> DOUBLE = new TypeAdapter<Number>() {
 
         @Override
-        public void visit(Number value, Visitor visitor) throws IOException {
+        public void visit(Number value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -174,7 +172,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Number> NUMBER = new TypeAdapter<Number>() {
 
         @Override
-        public void visit(Number value, Visitor visitor) throws IOException {
+        public void visit(Number value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -184,7 +182,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Character> CHARACTER = new TypeAdapter<Character>() {
 
         @Override
-        public void visit(Character value, Visitor visitor) throws IOException {
+        public void visit(Character value, Visitor visitor) throws Exception {
             // out.value(value == null ? null : String.valueOf(value));
         }
     };
@@ -194,7 +192,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<String> STRING = new TypeAdapter<String>() {
 
         @Override
-        public void visit(String value, Visitor visitor) throws IOException {
+        public void visit(String value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -202,7 +200,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<BigDecimal> BIG_DECIMAL = new TypeAdapter<BigDecimal>() {
 
         @Override
-        public void visit(BigDecimal value, Visitor visitor) throws IOException {
+        public void visit(BigDecimal value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -210,7 +208,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<BigInteger> BIG_INTEGER = new TypeAdapter<BigInteger>() {
 
         @Override
-        public void visit(BigInteger value, Visitor visitor) throws IOException {
+        public void visit(BigInteger value, Visitor visitor) throws Exception {
             // out.value(value);
         }
     };
@@ -220,7 +218,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<StringBuilder> STRING_BUILDER = new TypeAdapter<StringBuilder>() {
 
         @Override
-        public void visit(StringBuilder value, Visitor visitor) throws IOException {
+        public void visit(StringBuilder value, Visitor visitor) throws Exception {
             // out.value(value == null ? null : value.toString());
         }
     };
@@ -230,7 +228,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<StringBuffer> STRING_BUFFER = new TypeAdapter<StringBuffer>() {
 
         @Override
-        public void visit(StringBuffer value, Visitor visitor) throws IOException {
+        public void visit(StringBuffer value, Visitor visitor) throws Exception {
             // out.value(value == null ? null : value.toString());
         }
     };
@@ -240,7 +238,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<URL> URL = new TypeAdapter<URL>() {
 
         @Override
-        public void visit(URL value, Visitor visitor) throws IOException {
+        public void visit(URL value, Visitor visitor) throws Exception {
             // out.value(value == null ? null : value.toExternalForm());
         }
     };
@@ -250,7 +248,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<URI> URI = new TypeAdapter<URI>() {
 
         @Override
-        public void visit(URI value, Visitor visitor) throws IOException {
+        public void visit(URI value, Visitor visitor) throws Exception {
             // out.value(value == null ? null : value.toASCIIString());
         }
     };
@@ -260,7 +258,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<InetAddress> INET_ADDRESS = new TypeAdapter<InetAddress>() {
 
         @Override
-        public void visit(InetAddress value, Visitor visitor) throws IOException {
+        public void visit(InetAddress value, Visitor visitor) throws Exception {
             //out.value(value == null ? null : value.getHostAddress());
         }
     };
@@ -271,7 +269,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<UUID> UUID = new TypeAdapter<UUID>() {
 
         @Override
-        public void visit(UUID value, Visitor visitor) throws IOException {
+        public void visit(UUID value, Visitor visitor) throws Exception {
             // out.value(value == null ? null : value.toString());
         }
     };
@@ -281,7 +279,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Currency> CURRENCY = new TypeAdapter<Currency>() {
 
         @Override
-        public void visit(Currency value, Visitor visitor) throws IOException {
+        public void visit(Currency value, Visitor visitor) throws Exception {
             // out.value(value.getCurrencyCode());
         }
     }.nullSafe();
@@ -300,7 +298,7 @@ public final class TypeAdapters {
             return (TypeAdapter<T>) new TypeAdapter<Timestamp>() {
 
                 @Override
-                public void visit(Timestamp value, Visitor visitor) throws IOException {
+                public void visit(Timestamp value, Visitor visitor) throws Exception {
                     dateTypeAdapter.visit(value, visitor);
                 }
             };
@@ -316,7 +314,7 @@ public final class TypeAdapters {
         private static final String SECOND = "second";
 
         @Override
-        public void visit(Calendar value, Visitor visitor) throws IOException {
+        public void visit(Calendar value, Visitor visitor) throws Exception {
             if (value == null) {
                 // out.nullValue();
                 return;
@@ -343,7 +341,7 @@ public final class TypeAdapters {
     public static final TypeAdapter<Locale> LOCALE = new TypeAdapter<Locale>() {
 
         @Override
-        public void visit(Locale value, Visitor visitor) throws IOException {
+        public void visit(Locale value, Visitor visitor) throws Exception {
             // out.value(value == null ? null : value.toString());
         }
     };
@@ -355,26 +353,15 @@ public final class TypeAdapters {
         private final Map<T, String> constantToName = new HashMap<T, String>();
 
         public EnumTypeAdapter(Class<T> classOfT) {
-            try {
-                for (T constant : classOfT.getEnumConstants()) {
-                    String name = constant.name();
-                    SerializedName annotation = classOfT.getField(name).getAnnotation(SerializedName.class);
-                    if (annotation != null) {
-                        name = annotation.value();
-                        for (String alternate : annotation.alternate()) {
-                            nameToConstant.put(alternate, constant);
-                        }
-                    }
-                    nameToConstant.put(name, constant);
-                    constantToName.put(constant, name);
-                }
-            } catch (NoSuchFieldException e) {
-                throw new AssertionError(e);
+            for (T constant : classOfT.getEnumConstants()) {
+                String name = constant.name();
+                nameToConstant.put(name, constant);
+                constantToName.put(constant, name);
             }
         }
 
         @Override
-        public void visit(T value, Visitor visitor) throws IOException {
+        public void visit(T value, Visitor visitor) throws Exception {
             // out.value(value == null ? null : constantToName.get(value));
         }
     }
@@ -469,7 +456,7 @@ public final class TypeAdapters {
                 }
                 return (TypeAdapter<T2>) new TypeAdapter<T1>() {
                     @Override
-                    public void visit(T1 value, Visitor visitor) throws IOException {
+                    public void visit(T1 value, Visitor visitor) throws Exception {
                         typeAdapter.visit(value, visitor);
                     }
 

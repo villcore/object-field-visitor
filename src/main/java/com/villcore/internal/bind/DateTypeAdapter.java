@@ -17,17 +17,12 @@
 package com.villcore.internal.bind;
 
 import com.villcore.ObjectFieldHelper;
-import com.villcore.JsonSyntaxException;
 import com.villcore.TypeAdapter;
 import com.villcore.TypeAdapterFactory;
-import com.villcore.internal.bind.util.ISO8601Utils;
 import com.villcore.reflect.TypeToken;
 import com.villcore.visitor.Visitor;
 
-import java.io.IOException;
 import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.ParsePosition;
 import java.util.Date;
 import java.util.Locale;
 
@@ -51,24 +46,8 @@ public final class DateTypeAdapter extends TypeAdapter<Date> {
     private final DateFormat localFormat
             = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT);
 
-    private synchronized Date deserializeToDate(String json) {
-        try {
-            return localFormat.parse(json);
-        } catch (ParseException ignored) {
-        }
-        try {
-            return enUsFormat.parse(json);
-        } catch (ParseException ignored) {
-        }
-        try {
-            return ISO8601Utils.parse(json, new ParsePosition(0));
-        } catch (ParseException e) {
-            throw new JsonSyntaxException(json, e);
-        }
-    }
-
     @Override
-    public synchronized void visit(Date value, Visitor visitor) throws IOException {
+    public synchronized void visit(Date value, Visitor visitor) throws Exception {
         if (value == null) {
             return;
         }

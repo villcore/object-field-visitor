@@ -16,15 +16,11 @@
 
 package com.villcore;
 
-import com.villcore.internal.ConstructorConstructor;
-import com.villcore.internal.Excluder;
-import com.villcore.reflect.TypeToken;
-import com.villcore.stream.JsonWriter;
 import com.villcore.internal.bind.*;
+import com.villcore.reflect.TypeToken;
 import com.villcore.visitor.Visitor;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,13 +28,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongArray;
 
 public final class ObjectFieldHelper {
-    static final boolean DEFAULT_JSON_NON_EXECUTABLE = false;
-    static final boolean DEFAULT_LENIENT = false;
-    static final boolean DEFAULT_PRETTY_PRINT = false;
-    static final boolean DEFAULT_ESCAPE_HTML = true;
-    static final boolean DEFAULT_SERIALIZE_NULLS = false;
-    static final boolean DEFAULT_COMPLEX_MAP_KEYS = false;
-    static final boolean DEFAULT_SPECIALIZE_FLOAT_VALUES = false;
 
     private static final TypeToken<?> NULL_KEY_SURROGATE = TypeToken.get(Object.class);
 
@@ -47,44 +36,23 @@ public final class ObjectFieldHelper {
     private final Map<TypeToken<?>, TypeAdapter<?>> typeTokenCache = new ConcurrentHashMap<TypeToken<?>, TypeAdapter<?>>();
 
     private final List<TypeAdapterFactory> factories;
-    private final ConstructorConstructor constructorConstructor;
 
-    private final boolean serializeNulls;
-    private final JsonAdapterAnnotationTypeAdapterFactory jsonAdapterFactory;
+    private final Annotation annotation;
 
-    public ObjectFieldHelper() {
-        this(Excluder.DEFAULT, FieldNamingPolicy.IDENTITY,
-                Collections.<Type, InstanceCreator<?>>emptyMap(), DEFAULT_SERIALIZE_NULLS,
-                DEFAULT_COMPLEX_MAP_KEYS, DEFAULT_JSON_NON_EXECUTABLE, DEFAULT_ESCAPE_HTML,
-                DEFAULT_PRETTY_PRINT, DEFAULT_LENIENT, DEFAULT_SPECIALIZE_FLOAT_VALUES,
-                LongSerializationPolicy.DEFAULT, Collections.<TypeAdapterFactory>emptyList());
-    }
-
-    ObjectFieldHelper(final Excluder excluder, final FieldNamingStrategy fieldNamingStrategy,
-                      final Map<Type, InstanceCreator<?>> instanceCreators, boolean serializeNulls,
-                      boolean complexMapKeySerialization, boolean generateNonExecutableGson, boolean htmlSafe,
-                      boolean prettyPrinting, boolean lenient, boolean serializeSpecialFloatingPointValues,
-                      LongSerializationPolicy longSerializationPolicy,
-                      List<TypeAdapterFactory> typeAdapterFactories) {
-        this.constructorConstructor = new ConstructorConstructor(instanceCreators);
-        this.serializeNulls = serializeNulls;
-
+    public ObjectFieldHelper(Annotation annotation) {
+        this.annotation = annotation;
         List<TypeAdapterFactory> factories = new ArrayList<TypeAdapterFactory>();
 
         factories.add(ObjectTypeAdapter.FACTORY);
-        factories.add(excluder);
-        factories.addAll(typeAdapterFactories);
-
         // type adapters for basic platform types
         factories.add(TypeAdapters.STRING_FACTORY);
         factories.add(TypeAdapters.INTEGER_FACTORY);
         // factories.add(TypeAdapters.BOOLEAN_FACTORY);
         // factories.add(TypeAdapters.BYTE_FACTORY);
         // factories.add(TypeAdapters.SHORT_FACTORY);
-        TypeAdapter<Number> longAdapter = longAdapter(longSerializationPolicy);
-        factories.add(TypeAdapters.newFactory(long.class, Long.class, longAdapter));
-        factories.add(TypeAdapters.newFactory(double.class, Double.class, doubleAdapter(serializeSpecialFloatingPointValues)));
-        factories.add(TypeAdapters.newFactory(float.class, Float.class, floatAdapter(serializeSpecialFloatingPointValues)));
+        factories.add(TypeAdapters.newFactory(long.class, Long.class, TypeAdapters.LONG));
+        factories.add(TypeAdapters.newFactory(double.class, Double.class, doubleAdapter()));
+        factories.add(TypeAdapters.newFactory(float.class, Float.class, floatAdapter(false)));
         factories.add(TypeAdapters.NUMBER_FACTORY);
         // factories.add(TypeAdapters.ATOMIC_INTEGER_FACTORY);
         // factories.add(TypeAdapters.ATOMIC_BOOLEAN_FACTORY);
@@ -112,23 +80,21 @@ public final class ObjectFieldHelper {
         // factories.add(TypeAdapters.CLASS_FACTORY);
 
         // type adapters for composite and user-defined types
-        factories.add(new CollectionTypeAdapterFactory(constructorConstructor));
-        factories.add(new MapTypeAdapterFactory(constructorConstructor));
-        this.jsonAdapterFactory = new JsonAdapterAnnotationTypeAdapterFactory(constructorConstructor);
-        factories.add(jsonAdapterFactory);
+        factories.add(new CollectionTypeAdapterFactory());
+        factories.add(new MapTypeAdapterFactory());
         // factories.add(TypeAdapters.ENUM_FACTORY);
-        factories.add(new ReflectiveTypeAdapterFactory(constructorConstructor, fieldNamingStrategy, excluder, jsonAdapterFactory));
+        factories.add(new ReflectiveTypeAdapterFactory());
 
         this.factories = Collections.unmodifiableList(factories);
     }
 
-    private TypeAdapter<Number> doubleAdapter(boolean serializeSpecialFloatingPointValues) {
-        if (serializeSpecialFloatingPointValues) {
+    private TypeAdapter<Number> doubleAdapter() {
+        if (false) {
             return TypeAdapters.DOUBLE;
         }
         return new TypeAdapter<Number>() {
             @Override
-            public void visit(Number value, Visitor visitor) throws IOException {
+            public void visit(Number value, Visitor visitor) throws Exception {
                 if (value == null) {
                     return;
                 }
@@ -144,7 +110,7 @@ public final class ObjectFieldHelper {
         }
         return new TypeAdapter<Number>() {
             @Override
-            public void visit(Number value, Visitor visitor) throws IOException {
+            public void visit(Number value, Visitor visitor) throws Exception {
                 if (value == null) {
                     return;
                 }
@@ -162,24 +128,10 @@ public final class ObjectFieldHelper {
         }
     }
 
-    private static TypeAdapter<Number> longAdapter(LongSerializationPolicy longSerializationPolicy) {
-        if (longSerializationPolicy == LongSerializationPolicy.DEFAULT) {
-            return TypeAdapters.LONG;
-        }
-        return new TypeAdapter<Number>() {
-            @Override
-            public void visit(Number value, Visitor visitor) throws IOException {
-                if (value == null) {
-                    return;
-                }
-            }
-        };
-    }
-
     private static TypeAdapter<AtomicLong> atomicLongAdapter(final TypeAdapter<Number> longAdapter) {
         return new TypeAdapter<AtomicLong>() {
             @Override
-            public void visit(AtomicLong value, Visitor visitor) throws IOException {
+            public void visit(AtomicLong value, Visitor visitor) throws Exception {
                 longAdapter.visit(value.get(), visitor);
             }
         }.nullSafe();
@@ -188,7 +140,7 @@ public final class ObjectFieldHelper {
     private static TypeAdapter<AtomicLongArray> atomicLongArrayAdapter(final TypeAdapter<Number> longAdapter) {
         return new TypeAdapter<AtomicLongArray>() {
             @Override
-            public void visit(AtomicLongArray value, Visitor visitor) throws IOException {
+            public void visit(AtomicLongArray value, Visitor visitor) throws Exception {
                 for (int i = 0, length = value.length(); i < length; i++) {
                     longAdapter.visit(value.get(i), visitor);
                 }
@@ -240,34 +192,14 @@ public final class ObjectFieldHelper {
     }
 
     public <T> TypeAdapter<T> getDelegateAdapter(TypeAdapterFactory skipPast, TypeToken<T> type) {
-        // Hack. If the skipPast factory isn't registered, assume the factory is being requested via
-        // our @JsonAdapter annotation.
-        if (!factories.contains(skipPast)) {
-            skipPast = jsonAdapterFactory;
-        }
-
-        boolean skipPastFound = false;
-        for (TypeAdapterFactory factory : factories) {
-            if (!skipPastFound) {
-                if (factory == skipPast) {
-                    skipPastFound = true;
-                }
-                continue;
-            }
-
-            TypeAdapter<T> candidate = factory.create(this, type);
-            if (candidate != null) {
-                return candidate;
-            }
-        }
-        throw new IllegalArgumentException("GSON cannot serialize " + type);
+        throw new IllegalArgumentException("ObjectFieldHelper cannot handle " + type);
     }
 
     public <T> TypeAdapter<T> getAdapter(Class<T> type) {
         return getAdapter(TypeToken.get(type));
     }
 
-    public void visit(Object src, Visitor visitor) throws Exception {
+    public <T extends Annotation> void visit(Object src, Visitor<T> visitor) throws Exception {
         visitor.startVisit(src);
         if (src != null) {
             visit(src, src.getClass(), visitor);
@@ -275,23 +207,9 @@ public final class ObjectFieldHelper {
         visitor.completeVisit(src);
     }
 
-    private static final Writer dummyWriter = new Writer() {
-        @Override
-        public void write(char[] cbuf, int off, int len) throws IOException {
-
-        }
-
-        @Override
-        public void flush() throws IOException {
-
-        }
-
-        @Override
-        public void close() throws IOException {
-
-        }
-    };
-    private static final JsonWriter dummyJsonWriter = new JsonWriter(dummyWriter);
+    public Annotation getAnnotation() {
+        return annotation;
+    }
 
     @SuppressWarnings("unchecked")
     public void visit(Object src, Type typeOfSrc, Visitor visitor) throws Exception {
@@ -310,21 +228,11 @@ public final class ObjectFieldHelper {
         }
 
         @Override
-        public void visit(T value, Visitor visitor) throws IOException {
+        public void visit(T value, Visitor visitor) throws Exception {
             if (delegate == null) {
                 throw new IllegalStateException();
             }
             delegate.visit(value, visitor);
         }
-    }
-
-    @Override
-    public String toString() {
-        return new StringBuilder("{serializeNulls:")
-                .append(serializeNulls)
-                .append(",factories:").append(factories)
-                .append(",instanceCreators:").append(constructorConstructor)
-                .append("}")
-                .toString();
     }
 }
