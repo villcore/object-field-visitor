@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 public class Example {
 
-    public static void main(String[] args) throws Exception {
-        ObjectFieldHelper objectFieldHelper = new ObjectFieldHelper(() -> Contended.class);
+    public static void main(String[] args) {
+        ObjectFieldHelper objectFieldHelper = new ObjectFieldHelper(() -> Tag.class);
 
         Person parent = new Person();
         parent.name = "A";
@@ -32,7 +32,6 @@ public class Example {
         Visitor<Tag> visitor = new VisitorAdapter<Tag>() {
             @Override
             public void startVisit(Object target) {
-                super.startVisit(target);
                 System.out.println("Start visit");
             }
 
@@ -51,7 +50,6 @@ public class Example {
 
             @Override
             public void completeVisit(Object target) {
-                super.completeVisit(target);
                 System.out.println("Complete visit");
             }
         };

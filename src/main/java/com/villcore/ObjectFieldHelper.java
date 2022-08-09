@@ -19,6 +19,7 @@ package com.villcore;
 import com.villcore.internal.bind.*;
 import com.villcore.reflect.TypeToken;
 import com.villcore.visitor.Visitor;
+import com.villcore.visitor.VisitorContext;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -200,11 +201,17 @@ public final class ObjectFieldHelper {
     }
 
     public <T extends Annotation> void visit(Object src, Visitor<T> visitor) throws Exception {
-        visitor.startVisit(src);
-        if (src != null) {
-            visit(src, src.getClass(), visitor);
+        try {
+            visitor.startVisit(src);
+            if (src != null) {
+                visit(src, src.getClass(), visitor);
+            }
+            visitor.completeVisit(src);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            VisitorContext.clearVisitedFields();
         }
-        visitor.completeVisit(src);
     }
 
     public Annotation getAnnotation() {

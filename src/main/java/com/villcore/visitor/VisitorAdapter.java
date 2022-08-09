@@ -6,11 +6,6 @@ import java.lang.reflect.Field;
 public abstract class VisitorAdapter<T extends Annotation> implements Visitor<T> {
 
     @Override
-    public void startVisit(Object target) {
-        VisitorContext.clearVisitedFields();
-    }
-
-    @Override
     public void visit(Object target, Field field, T annotation, String name, Object value) {
         Long objectFieldIdentity = objectFieldIdentity(target, field);
         if (VisitorContext.visitedFields().add(objectFieldIdentity)) {
@@ -19,11 +14,6 @@ public abstract class VisitorAdapter<T extends Annotation> implements Visitor<T>
     }
 
     public abstract void visitOnce(Object target, Field field, T annotation, String name, Object value);
-
-    @Override
-    public void completeVisit(Object target) {
-        VisitorContext.clearVisitedFields();
-    }
 
     public static Long objectFieldIdentity(Object target, Field field) {
         int objectId = System.identityHashCode(target);
